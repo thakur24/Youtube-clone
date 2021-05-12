@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    *, *::before, *::after {
+    box-sizing: border-box;
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+  }
+  
+  body {
+    margin: 0;
+  }
+  
+  .video-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 3rem 1rem;
+    padding: 3rem 0;
+    margin: 0 1.5rem;
+    border-top: 4px solid #CCC;
+  }
+  
+  .video-section:first-child {
+    border-top: none;
+  }
+  
+  .video-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .thumbnail {
+    position: relative;
+    display: flex;
+  }
+  
+  .thumbnail::before {
+    content: attr(data-duration);
+    position: absolute;
+    background-color: rgba(0, 0, 0, .85);
+    color: white;
+    right: 5px;
+    bottom: 5px;
+    padding: .1em .3em;
+    border-radius: .3em;
+    font-size: .9rem;
+  }
+  
+  .thumbnail-image {
+    width: 100%;
+    height: 100%;
+    min-width: 250px;
+    min-height: 150px;
+    background-color: #AAA;
+  }
+  
+  .video-bottom-section {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 1rem;
+  }
+  
+  .channel-icon {
+    margin-right: .75rem;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    background-color: #AAA;
+  }
+  
+  .video-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .video-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: .5rem;
+    text-decoration: none;
+    color: black;
+  }
+  
+  .video-channel-name {
+    margin-bottom: .1rem;
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  
+  .video-channel-name:hover {
+    color: #111;
+  }
+  
+  .video-channel-name,
+  .video-metadata {
+    color: #555;
+  }
+  
+  .video-section-title {
+    grid-column: 1 / -1;
+    margin: -.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 .5rem;
+  }
+  
+  .video-section-title-close {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 2rem;
+    color: #555;
+    cursor: pointer;
+  }
+  
+  .videos {
+    background-color: #F9F9F9;
+  }
+  
+  .categories {
+    padding: 1rem 2rem;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+  }
+  
+  .category-section {
+    display: flex;
+    overflow: hidden;
+  }
+  
+  .category {
+    margin-right: 1rem;
+    word-wrap: none;
+    white-space: nowrap;
+    border: 1px solid #CCC;
+    border-radius: 900px;
+    background-color: #E7E7E7;
+    padding: .5rem 1rem;
+    font-size: inherit;
+    cursor: pointer;
+    transition: background-color 150ms;
+  }
+  
+  .category:hover {
+    background-color: #DDD;
+  }
+  
+  .category.active {
+    background-color: #606060;
+    color: white;
+    border-color: #EEE;
+  }
+  
+  .category:last-child {
+    margin-right: 0;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+  }
+  
+  .youtube-logo {
+    height: 20px;
+  }
+  
+  .search-bar {
+    display: flex;
+    flex-grow: 1;
+    margin: 0 2rem 0 4rem;
+  }
+  
+  .search-input {
+    width: 100%;
+    font-size: inherit;
+    padding: .4em;
+    border: 1px solid #777;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  .search-btn {
+    display: flex;
+    align-items: center;
+    padding: 0 1.25rem;
+    border: 1px solid #777;
+    background-color: #F8F8F8;
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    cursor: pointer;
+  }
+  
+  .search-btn:hover {
+    background-color: #F0F0F0;
+  }
+  
+  .menu-icons {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .menu-channel-icon {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    background-color: #AAA;
+  }
+  body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.notification {
+  background-color: #555;
+  color: white;
+  text-decoration: none;
+  padding: 15px 20px;
+  position: relative;
+  display: inline-block;
+  border-radius: 1px;
+}
+
+.notification:hover {
+  background: red;
+}
+
+.notification .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background-color: red;
+  color: white;
+}
+</style>
+<body>
+  <header class="header">
+    <a href="#">
+      <img src="data:image/png;base64,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" alt="YouTube Logo" class="youtube-logo" />
+    </a>
+    <form class="search-bar">
+      <input class="search-input" type="search" placeholder="Search" aria-label="Search" />
+      <button type="submit" class="search-btn">
+        <img src="" />
+      </button>
+    </form>
+    <div class="menu-icons">
+      <!--<a href="#">
+        <img src=" " alt="Upload Video" />
+      </a>
+      <a href="#">
+        <img src=" " alt="Apps" />
+      </a>-->
+      <a href="#" class="notification">
+        <!--<img src="" alt="Notifications" />-->
+        <span>Notifications</span>
+        <!--<span class="badge">3</span>-->
+      </a>
+      <a href="#">
+        <img class="menu-channel-icon" src="http:///unsplash.it/36/36?gravity=center" alt="Your Channel" />
+      </a>
+    </div>
+  </header>
+  <div class="categories">
+    <section class="category-section">
+      <button class="category active">All</button>
+      <button class="category">Action</button>
+      <button class="category">Netflix</button>
+      <button class="category">News</button>
+      <button class="category">Romance</button>
+      <button class="category">Cricket</button>
+      <button class="category">UFC</button>
+      <button class="category">Jack Ryan</button>
+      <button class="category">DSA</button>
+      <button class="category">OOPS</button>
+    </section>
+  </div>
+  <div class="videos">
+    <section class="video-section">
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="10:01">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">How To Get Rich</a>
+            <a href="#" class="video-channel-name">YOLO</a>
+            <div class="video-metadata">
+              <span>49K views</span>
+              •
+              <span>6 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="18:03">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+            
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Best ufc fight</a>
+            <a href="#" class="video-channel-name">UFC</a>
+            <div class="video-metadata">
+              <span>129K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="21:44">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Daily News</a>
+            <a href="#" class="video-channel-name">abp News</a>
+            <div class="video-metadata">
+              <span>245 views</span>
+              •
+              <span>1 hr ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="34:00">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">how to crack amazon</a>
+            <a href="#" class="video-channel-name">dsa1</a>
+            <div class="video-metadata">
+              <span>346K views</span>
+              •
+              <span>8 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="45:23">
+         <!-- <img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+         <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+         </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">FAANG made easy</a>
+            <a href="#" class="video-channel-name">dsa1</a>
+            <div class="video-metadata">
+              <span>127K views</span>
+              •
+              <span>3 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">another reality</a>
+            <a href="#" class="video-channel-name">scifi</a>
+            <div class="video-metadata">
+              <span>897 views</span>
+              •
+              <span>4 hours ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="5:10">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Biden's diplomacy</a>
+            <a href="#" class="video-channel-name">CNN</a>
+            <div class="video-metadata">
+              <span>8K views</span>
+              •
+              <span>1 day ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="31:52">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Asking stranger to travel the world</a>
+            <a href="#" class="video-channel-name">crazyjohn</a>
+            <div class="video-metadata">
+              <span>916K views</span>
+              •
+              <span>2 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+    <section class="video-section">
+      <h2 class="video-section-title">
+        Trending
+        <button class="video-section-title-close">&times;</button>
+      </h2>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      
+    </section>
+    <section class="video-section">
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="video-container">
+        <a href="#" class="thumbnail" data-duration="12:24">
+          <!--<img class="thumbnail-image" src="http://unsplash.it/250/150?gravity=center" />-->
+          <iframe width="300" height="180" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+          </iframe>
+        </a>
+        <div class="video-bottom-section">
+          <a href="#">
+            <img class="channel-icon" src="http://unsplash.it/36/36?gravity=center" />
+          </a>
+          <div class="video-details">
+            <a href="#" class="video-title">Video Title</a>
+            <a href="#" class="video-channel-name">Channel Name</a>
+            <div class="video-metadata">
+              <span>12K views</span>
+              •
+              <span>1 week ago</span><br>
+              <!--<button type="button" style="margin:3px;">LIKE</button>
+              <!--<button type="button" style="margin:3px;">DISLIKE</button>
+              <button type="button" style="margin:3px;">UPLOAD</button>-->
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Liked')">LIKE</BUTTON>
+              <BUTTON TYPE="button" style="margin:3px;" ONCLICK="alert('Upload video here')">UPLOAD</BUTTON>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+
+
+  
+
+  <!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtube</title>
+    <!--<link rel="stylesheet" href="./main.css">
+    <script >
+        const navButton = document.getElementById('navbtn');
+const body = document.getElementsByTagName('body')[0];
+const sidebar = document.querySelector('.sidebar');
+const navButtonMobile = document.getElementById('navbtn_mobile');
+const root = document.documentElement;
+
+window.onresize = resize;
+
+function resize(){
+    if (window.innerWidth < 550) {
+        root.style.setProperty("--margin-left", '0');
+    }
+    else{
+        root.style.setProperty("--margin-left", '270px');
+    }
+}
+
+navButton.addEventListener('click', e=>{
+    if (window.innerWidth > 550) {
+        sidebar.classList.toggle('side-trigger');
+    }
+    else{
+        sidebar.classList.toggle('mobile');
+        body.classList.toggle('overlay');
+    }
+
+    if (sidebar.classList.contains('side-trigger')) {
+        root.style.setProperty("--margin-left", '100px');
+    }
+    else if(sidebar.classList.contains('mobile')){
+        root.style.setProperty("--margin-left", '0');
+    }
+    else{
+        root.style.setProperty("--margin-left", '270px');
+    }
+})
+
+navButtonMobile.addEventListener('click', e =>{
+    sidebar.classList.toggle('mobile');
+    body.classList.toggle('overlay');
+})
+
+body.addEventListener('click', e =>{
+    if (e.target.classList.contains('overlay')) {
+        sidebar.classList.toggle('mobile');
+        body.classList.toggle('overlay');
+    }
+})
+    </script>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;700&display=swap');
+
+        :root{
+            --font-size: 20px;
+            --base-font: sans-serif;
+            --logo-font: Oswald, sans-serif;
+            --height: 35px;
+            --margin-left: 270px;
+        }
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        hr{
+            border: 0.2px solid #ccc3;
+            margin: 10px 0;
+        }
+        svg{
+            width: 30px !important;
+        }
+        
+        body{
+            font-family: sans-serif;
+            background: #ccc3;
+            color: #333;
+            position: relative;
+        }
+        
+        body.overlay::before{
+            content: "";
+            background: #111;
+            opacity: 0.8;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 2;
+        }
+        
+        header{
+            height: 56px;
+            background: #fff;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            padding-bottom: 50px;
+            z-index: 1;
+        }
+        
+        header .navbar{
+            display: flex;
+            justify-content: space-between;
+            line-height: 0;
+            align-items: center;
+        }
+        
+        header nav i {
+            font-size: var(--font-size);
+        }
+        #logo {
+            font-size: var(--font-size);
+        }
+        #logo i{
+            color: #f00;
+        }
+        #logo span{
+            font-family: var(--logo-font);
+            font-weight: 400;
+            font-size: var(--font-size);
+            margin-left: -4px;
+        }
+        
+        #navbtn{
+            cursor: pointer;
+            border-radius: 50%;
+            text-align: center;
+            padding: 12px;
+            margin-left: 10px;
+        }
+        
+        #navbtn:active{
+            background-color: #ccc4;
+        }
+        
+        
+        .left-icons,
+        .search,
+        .right-icons{
+            display: flex;
+        }
+        
+        .left-icons,
+        .right-icons{
+            list-style-type:none;
+        }
+        .left-icons li{
+            padding: 10px 20px;
+        }
+        .search .searchbtn{
+            background: #ccc3;
+            text-align: center;
+            height: var(--height);
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .search-icon{
+            display: none;
+        }
+        .searchbtn i{
+            padding: 0.5rem 3rem;
+            font-size: 15px;
+        }
+        .search input{
+            min-width: 30rem;
+            padding: 0 10px;
+            height: var(--height);
+            border: 1px solid #ccc;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .right-icons{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .right-icons li i{
+            padding: 1px;
+        }
+        
+        .right-icons .profile{
+            border-radius: 50%;
+            height: 40px;
+            width: 40px;
+            overflow: hidden;
+        }
+        
+        .right-icons .profile img{
+            width: 100%;
+        }
+        .right-icons li {
+            margin: 0 1rem;
+        }
+        
+        .profile span{
+            background: #ccc;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 0 !important;
+            overflow: hidden;
+        }
+        
+        .profile span i{
+            font-size: 15px;
+            padding: 10px;
+        }
+        
+        
+        .container{
+            padding-top: 50px;
+            margin-left: var(--margin-left);
+        }
+        .hero{
+            position: relative;
+        }
+        .row{
+            position: relative;
+            height: auto;
+            margin: auto;
+            padding: 15px 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+            grid-gap:1rem;
+            grid-auto-flow: dense;
+        }
+        
+        .row .thumb{
+            height: 200px;
+            background: #ccc;
+        }
+        
+        .row .details{
+            display: flex;
+            margin: 15px 0;
+        }
+        
+        .row .details .profile-pic{
+            background: #ccc;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .views{
+            font-size: 13px;
+        }
+        
+        .uploaded::before{
+            content: "";
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #111;
+            display: inline-block;
+            margin: 4px;
+        }
+        
+        .title{
+            color: #111;
+        }
+        
+        .channel{
+            font-size: 14px;
+        }
+        
+        .sidebar{
+            width: 250px;
+            height: 94vh;
+            top: 60px;
+            left: 0;
+            position: fixed;
+            background: #fff;
+            overflow-y: hidden;
+        }
+        .sidebar.side-trigger{
+            width: 100px;
+        }
+        
+        .sidebar.sidebar.side-trigger:hover{
+            overflow-y: hidden;
+        }
+        
+        .sidebar.side-trigger li,
+        .sidebar.side-trigger #sidebar-content li,
+        .sidebar.side-trigger h4,
+        .sidebar.side-trigger div,
+        .sidebar.side-trigger hr,
+        .sidebar .left-icons
+        {
+            display: none;
+        }
+        
+        .sidebar.side-trigger li.sub{
+            border: none;
+        }
+        
+        .sidebar.side-trigger #sidebar-content li.trigger{
+            display: flex;
+            flex-direction: column;
+        }
+        
+        
+        .sidebar.side-trigger #sidebar-content li.trigger span{
+            font-size: 10px;
+        }
+        
+        .sidebar.side-trigger #sidebar-content li.trigger > svg{
+            height: auto !important;
+        }
+        
+        .sidebar.mobile{
+            height: 100vh;
+            overflow-y: scroll;
+            transform: translateX(0);
+        }
+        
+        
+        #navbtn_mobile{
+            padding: 18px 22px 0 20px;
+        }
+        .sidebar.mobile .left-icons{
+            padding: 0 20px;
+            font-size: var(--font-size);
+        }
+        .sidebar.mobile #logo{
+            padding: 10px 0 10px 11px;
+        }
+        
+        .sidebar.mobile #logo span{
+            padding: 0;
+        }
+        
+        .sub{
+            border-bottom: 1px solid #ccc3;
+        }
+        .sidebar:hover{
+            overflow-y: scroll;
+        }
+        
+        .sidebar::-webkit-scrollbar{width: 5px;}
+        .sidebar::-webkit-scrollbar-track{background:#f1f1f1}
+        .sidebar::-webkit-scrollbar-thumb{background: #888;}
+        .sidebar::-webkit-scrollbar-thumb:hover{background: #333;}
+        
+        
+        #sidebar-content,
+        .subscriptions,
+        .more{
+            list-style-type: none;
+        }
+        
+        #sidebar-content li, 
+        .subscriptions li, 
+        .more li{
+            display: flex;
+            align-items: center;
+            padding: 10px 35px;
+            font-size: 14px;
+        }
+        
+        #sidebar-content li svg{
+            width: 27px !important;
+        }
+        
+        
+        #sidebar-content li i, 
+        .subscriptions li i, 
+        .more li i{
+            font-size: var(--font-size);
+            width: 30px;
+            text-align: center;
+        }
+        
+        .sidebar ul li span{
+            padding: 0 20px;
+        }
+        
+        .sidebar ul li.active{
+           background-color: #ccc6;
+        }
+        .sidebar ul li.active i{
+            color: #f00;
+        }
+        
+        .side-header{
+            padding: 0 35px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .sidebar .left-icons li{
+            padding: 0 20px;
+        }
+        
+        .sub-footer{
+            padding: 5px 35px;
+            font-size: 12px;
+        }
+        
+        .sub-footer span{ 
+            padding: 2px 0;
+        }
+        .footer{
+            padding: 5px 35px;
+            font-size: 12px;
+        }
+        
+        @media only screen and (max-width: 1200px){
+            .search input{
+                min-width: 18rem;
+            }
+        }
+        
+        
+        
+        @media only screen and (max-width: 930px){
+            .search{
+                display: none;
+            }
+            .right-icons li {
+                margin: 0 10px;
+            }
+        
+            .search-icon{
+                display: block;
+            }
+        }
+        
+        @media only screen and (max-width: 550px){
+            .item{
+                padding: 10px 30px;
+            }
+            .sidebar{
+                top: 0;
+                transform: translateX(-100%);
+                z-index: 100;
+                transition: transform 200ms ease;
+            }
+        
+            .sidebar .left-icons{
+                display: flex;
+            }
+        }
+        </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <ul class="left-icons">
+                <li id="navbtn">
+                    <i class="fas fa-bars"></i>
+                </li>
+
+                <li id="logo">
+                    <i class="fab fa-youtube"></i>
+                    <span>Youtube</span>
+                </li>
+            </ul>
+
+            <div class="search">
+                <input type="text" placeholder="Search">
+                <span class="searchbtn">
+                    <i class="fas fa-search"></i>
+                </span>
+            </div>
+
+            <ul class="right-icons">
+                <li class="search-icon">
+                    <i class="fas fa-search"></i>
+                </li>
+
+                <li class="create">
+                    <svg viewBox="0 0 28 28" preserveAspectRatio="xMidYMid meet" focusable="false"
+                    class="style-scope yt-icon"
+                    style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                    <g class="style-scope yt-icon">
+                        <path
+                            d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"
+                            class="style-scope yt-icon"></path>
+                    </g>
+                </svg>
+                </li>
+
+                <li class="apps">
+                    <i class="fas fa-th"></i>
+                </li>
+
+                <li class="bell">
+                    <i class="fas fa-bell"></i>
+                </li>
+
+                <li class="profile">
+                    <img src="./profile.jpg" alt="">
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+
+
+
+    <section class="hero">
+        <div class="sidebar">
+            <ul class="left-icons">
+                <li id="navbtn_mobile">
+                    <i class="fas fa-bars"></i>
+                </li>
+
+                <li id="logo">
+                    <i class="fab fa-youtube"></i>
+                    <span>Youtube</span>
+                </li>
+            </ul>
+
+            <ul id="sidebar-content">
+                <li class="active trigger">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </li>
+
+                <li class="trigger">
+                    <i class="fas fa-fire"></i>
+                    <span>Trending</span>
+                </li>
+
+                <li class="sub trigger">
+                    <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false"
+                        class="style-scope yt-icon"
+                        style="pointer-events: none; display: block; width: 100%; height: 100%;">
+                        <g class="style-scope yt-icon">
+                            <path
+                                d="M18.7 8.7H5.3V7h13.4v1.7zm-1.7-5H7v1.6h10V3.7zm3.3 8.3v6.7c0 1-.7 1.6-1.6 1.6H5.3c-1 0-1.6-.7-1.6-1.6V12c0-1 .7-1.7 1.6-1.7h13.4c1 0 1.6.8 1.6 1.7zm-5 3.3l-5-2.7V18l5-2.7z"
+                                class="style-scope yt-icon"></path>
+                        </g>
+                    </svg>
+                    <span>
+                        Subscriptions
+                    </span>
+                </li>
+
+                <li class="trigger">
+                    <svg viewBox="0 0 27 27" preserveAspectRatio="xMidYMid meet" focusable="false"
+                        class="style-scope yt-icon"
+                        style="color: #555;pointer-events: none; display: block; width: 100%; height: 100%;">
+                        <g class="style-scope yt-icon">
+                            <path fill="none" d="M0 0h24v24H0z" class="style-scope yt-icon"></path>
+                            <path
+                                d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"
+                                class="style-scope yt-icon"></path>
+                        </g>
+                    </svg>
+                    <span>Library</span>
+                </li>
+
+
+                <li>
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </li>
+
+
+                <li>
+                    <svg viewBox="0 0 27 27" preserveAspectRatio="xMidYMid meet" focusable="false"
+                        class="style-scope yt-icon"
+                        style="color: #555; pointer-events: none; display: block; width: 100%; height: 100%;">
+                        <g class="style-scope yt-icon">
+                            <path
+                                d="M18.4 5.6v12.8H5.6V5.6h12.8zm0-1.8H5.6a1.8 1.8 0 0 0-1.8 1.8v12.8a1.8 1.8 0 0 0 1.8 1.9h12.8a1.8 1.8 0 0 0 1.9-1.9V5.6a1.8 1.8 0 0 0-1.9-1.8z"
+                                class="style-scope yt-icon"></path>
+                            <path d="M10.2 9v6.5l5-3.2-5-3.2z" class="style-scope yt-icon"></path>
+                        </g>
+                    </svg>
+                    <span>Your Videos</span>
+                </li>
+
+                <li>
+                    <i class="fas fa-clock"></i>
+                    <span>Watch Later</span>
+                </li>
+            </ul>
+            <hr>
+            <h4 class="side-header">Subscriptions</h4>
+
+            <ul class="subscriptions">
+                <li>
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Item 1</span>
+                </li>
+                <li>
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Item 1</span>
+                </li>
+                <li>
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Item 1</span>
+                </li>
+                <li>
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Item 1</span>
+                </li>
+            </ul>
+
+            <hr>
+
+            <h4 class="side-header">More from Youtube</h4>
+
+            <ul class="more">
+                <li>
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Gaming</span>
+                </li>
+                <li>
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Live</span>
+                </li>
+                <li>
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Fashion & Beauty</span>
+                </li>
+                <li>
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Learning</span>
+                </li>
+            </ul>
+
+            <hr>
+
+            <ul class="more">
+                <li>
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </li>
+                <li>
+                    <i class="fas fa-flag"></i>
+                    <span>Report History</span>
+                </li>
+                <li>
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help</span>
+                </li>
+                <li>
+                    <i class="fas fa-comment-alt"></i>
+                    <span>Send feedback</span>
+                </li>
+            </ul>
+
+            <div class="sub-footer">
+                <span>About</span>
+                <span>Copyright</span>
+                <span>Contact Us</span>
+                <span>Creators</span>
+                <span>Advertise</span>
+                <span>Developers</span>
+            </div>
+
+
+            <div class="footer">
+                &copy; 2020 Google LLC
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="thumb"></div>
+                    <div class="details">
+                        <div class="profile-pic"></div>
+                        <div class="video-details">
+                            <div class="title">Lorem Ipsum Lorem Ipsum Lorem Ipsum
+
+                            </div>
+                            <div class="channel">New Channel</div>
+                            <div class="views">17k views 
+                                <span class="uploaded">2days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </section>
+    
+
+
+
+
+    <script src="https://kit.fontawesome.com/03e233b384.js" crossorigin="anonymous"></script>
+</body>
+</html>-->
